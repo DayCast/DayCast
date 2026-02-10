@@ -3,6 +3,19 @@
  * AIエージェント関連の型定義
  */
 
+import { z } from "zod";
+
+// --- 既存の型定義はそのまま ---
+
+// ★追加：AIに期待する「Todoスコアリング結果」のバリデーション用
+export const AiScoredTodoSchema = z.object({
+  id: z.string(),
+  score: z.number().int().min(0).max(100),
+  reason: z.string(),
+});
+
+export const AiScoredTodoListSchema = z.array(AiScoredTodoSchema);
+
 // エージェントが使えるツールの種類
 export type AgentToolType = 
   | 'weather'      // 天気情報取得
