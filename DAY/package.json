@@ -1,0 +1,18 @@
+{
+  "name": "yoppy-types-constants",
+  "version": "1.0.0",
+  "description": "YOPPY AI Todo Manager の型定義と定数定義",
+  "author": "Your Team",
+  "license": "MIT",
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio"
+  },
+  "devDependencies": {
+    "@prisma/client": "^5.0.0",
+    "prisma": "^5.0.0",
+    "typescript": "^5.0.0"
+  }
+}
