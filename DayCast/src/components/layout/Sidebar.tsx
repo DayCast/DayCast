@@ -62,6 +62,14 @@ export function Sidebar() {
           );
         })}
       </nav>
+
+      {/* Footer Links */}
+      <div className="px-4 py-4 border-t border-sidebar-hover">
+        <div className="flex gap-3 text-xs text-slate-500">
+          <Link href="/terms" className="hover:text-slate-300">利用規約</Link>
+          <Link href="/privacy" className="hover:text-slate-300">プライバシー</Link>
+        </div>
+      </div>
     </aside>
   );
 }

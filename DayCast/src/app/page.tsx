@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { SignInButton } from "@/components/auth/sign-in-button";
 import { EmailSignInForm } from "@/components/auth/email-sign-in-form";
 
@@ -49,11 +50,13 @@ export default async function Home() {
 
         {/* Footer */}
         <div className="mt-8 flex justify-center gap-4 text-xs text-slate-400">
-          <span>利用規約</span>
+          <Link href="/terms" className="hover:text-slate-600 hover:underline">
+            利用規約
+          </Link>
           <span>|</span>
-          <span>プライバシー</span>
-          <span>|</span>
-          <span>サポート</span>
+          <Link href="/privacy" className="hover:text-slate-600 hover:underline">
+            プライバシー
+          </Link>
         </div>
       </main>
     </div>
