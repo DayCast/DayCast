@@ -62,7 +62,7 @@ export default async function DashboardPage() {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       <TodaySchedule events={events} />
-      <TodayTodo todos={todos} />
+      <TodayTodo todos={todos} userId={userId} />
       <EssentialPack 
         tags={packSuggestion.tags} 
         items={packSuggestion.items.map(item => ({
@@ -94,13 +94,22 @@ async function fetchWeather() {
     const timeDefines: string[] = data[0]?.timeSeries?.[0]?.timeDefines ?? [];
     const weatherCodes: string[] = todayForecast.weatherCodes ?? [];
 
-    const hourly = timeDefines.slice(0, 6).map((t: string, i: number) => ({
-      time: new Date(t).toLocaleTimeString("ja-JP", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      icon: weatherCodeToIcon(weatherCodes[i] ?? ""),
-    }));
+    // 重複時間を除去
+    const seenTimes = new Set<string>();
+    const hourly = timeDefines
+      .map((t: string, i: number) => ({
+        time: new Date(t).toLocaleTimeString("ja-JP", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        icon: weatherCodeToIcon(weatherCodes[i] ?? ""),
+      }))
+      .filter((h) => {
+        if (seenTimes.has(h.time)) return false;
+        seenTimes.add(h.time);
+        return true;
+      })
+      .slice(0, 6);
 
     return {
       location: "東京",
