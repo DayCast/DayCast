@@ -20,8 +20,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
     Resend({
-      apiKey: process.env.AUTH_RESEND_KEY,
-      from: process.env.EMAIL_FROM || "DayCast <noreply@daycast.app>",
+      apiKey: process.env.RESEND_API_KEY,
+      from: process.env.EMAIL_FROM || "onboarding@resend.dev",
     }),
   ],
   pages: {
