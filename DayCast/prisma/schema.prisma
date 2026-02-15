@@ -1,0 +1,156 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  dotenvPaths   = [".env.local", ".env"]
+}
+
+model User {
+    id                  String              @id @default(cuid())
+    email               String              @unique
+    name                String?
+    image               String?
+    emailVerified       DateTime?
+    createdAt           DateTime            @default(now())
+    updatedAt           DateTime            @updatedAt
+
+    // リレーション
+    todos               Todo[]
+    calendarEvents      CalendarEvent[]
+    settings            UserSettings?
+
+    // OAuth関連
+    accounts            Account[]
+    sessions            Session[]
+}
+
+model UserSettings {
+    id                  String              @id @default(cuid())
+    userId              String              @unique
+    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    // 連携状態
+    googleConnected     Boolean             @default(false)
+    googleCalendarId    String?
+    githubConnected     Boolean             @default(false)
+    appleConnected      Boolean             @default(false)
+    twitterConnected    Boolean             @default(false)
+
+    // Slack連携
+    slackConnected      Boolean             @default(false)
+    slackTeamId         String?
+    slackTeamName       String?
+    slackChannelId      String?
+    slackChannelName    String?
+    slackWebhookUrl     String?             @db.Text
+    slackAccessToken    String?             @db.Text
+
+    // Notion連携
+    notionConnected     Boolean             @default(false)
+    notionWorkspaceId   String?
+    notionWorkspaceName String?
+    notionDatabaseId    String?
+    notionAccessToken   String?             @db.Text
+
+    // アプリ設定
+    timezone            String              @default("Asia/Tokyo")
+    location            String?
+    enableNotifications Boolean             @default(true)
+    aiAutoMode          Boolean             @default(false)
+
+    // AIプロバイダー設定（ユーザーが選択）
+    aiProvider          String              @default("gemini")    // "gemini" | "vertexai"
+    aiModel             String              @default("gemini-2.0-flash")
+
+    updatedAt           DateTime            @updatedAt
+}
+
+model CalendarEvent {
+    id                  String              @id @default(cuid())
+    userId              String
+    title               String
+    description         String?             @db.Text
+    location            String?
+    startTime           DateTime
+    endTime             DateTime
+
+    // AIの調査結果を格納するフィールド
+    weatherInfo         Json?
+    recommendedItems    Json?
+    requiredEventId     String?
+    googleEventId       String?
+
+    // リレーション
+    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+    todos               Todo[]
+
+    @@unique([userId, googleEventId])
+    @@index([userId, startTime])
+}
+
+model Todo {
+    id                  String              @id @default(cuid())
+    userId              String
+    title               String
+    description         String?             @db.Text
+
+    // 優先順位・スコアリング関係
+    priority            String              @default("medium")
+    aiScore             Int                 @default(0)
+    aiReason            String?             @db.Text
+
+    status              String              @default("pending")
+    dueDate             DateTime?
+
+    // カレンダーの予定に紐づくTodo
+    calendarEventId     String?
+    calendarEvent       CalendarEvent?      @relation(fields: [calendarEventId], references: [id])
+
+    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt           DateTime            @default(now())
+    updatedAt           DateTime            @updatedAt
+
+    @@index([userId, aiScore])
+}
+
+// Auth.js (NextAuth) に必要なモデル
+model Account {
+    id                  String              @id @default(cuid())
+    userId              String
+    type                String
+    provider            String
+    providerAccountId   String
+    refresh_token       String?             @db.Text
+    access_token        String?             @db.Text
+    expires_at          Int?
+    token_type          String?
+    scope               String?
+    id_token            String?             @db.Text
+    session_state       String?
+
+    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id                  String              @id @default(cuid())
+    sessionToken        String              @unique
+    userId              String
+    expires             DateTime
+    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+    identifier          String
+    token               String              @unique
+    expires             DateTime
+
+    @@unique([identifier, token])
+}
