@@ -14,8 +14,11 @@ type CalendarViewProps = {
   events: CalendarEvent[];
 };
 
+type ViewMode = "month" | "week";
+
 export function CalendarView({ events }: CalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [viewMode, setViewMode] = useState<ViewMode>("month");
   
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -66,6 +69,30 @@ export function CalendarView({ events }: CalendarViewProps) {
 
   return (
     <div className="rounded-2xl bg-white p-6 shadow-sm">
+      {/* View Mode Toggle */}
+      <div className="mb-4 flex justify-end gap-2">
+        <button
+          onClick={() => setViewMode("month")}
+          className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+            viewMode === "month"
+              ? "bg-primary text-white"
+              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+          }`}
+        >
+          月
+        </button>
+        <button
+          onClick={() => setViewMode("week")}
+          className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+            viewMode === "week"
+              ? "bg-primary text-white"
+              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+          }`}
+        >
+          週
+        </button>
+      </div>
+
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <button

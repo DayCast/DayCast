@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { SignInButton } from "@/components/auth/sign-in-button";
-import { EmailSignInForm } from "@/components/auth/email-sign-in-form";
 
 export default async function Home() {
   const session = await auth();
@@ -34,18 +33,9 @@ export default async function Home() {
           カレンダー / Todo / 天気 / 位置情報 を1つに
         </p>
 
-        {/* Buttons */}
+        {/* Sign In Button */}
         <div className="space-y-3">
           <SignInButton />
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-200" />
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-white px-2 text-slate-400">または</span>
-            </div>
-          </div>
-          <EmailSignInForm />
         </div>
 
         {/* Footer */}

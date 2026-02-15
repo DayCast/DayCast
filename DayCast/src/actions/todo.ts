@@ -44,10 +44,10 @@ export async function toggleTodoComplete(todoId: string, userId: string) {
 
     await prisma.todo.update({
       where: { id: todoId },
-      data: { status: todo.status === "complete" ? "pending" : "complete" },
+      data: { status: todo.status === "completed" ? "pending" : "completed" },
     });
 
-    revalidatePath("/");
+    revalidatePath("/dashboard");
     return { success: true };
   } catch (error) {
     console.error("Error toggling todo:", error);

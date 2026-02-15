@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { updateAISettings } from "@/actions/settings";
+import { useState, useTransition } from "react";
+import { updateAISettings, updateUserProfile, updateUserSettings } from "@/actions/settings";
 
 type User = {
   id?: string;
@@ -56,7 +56,14 @@ export function SettingsForm({ user, aiSettings }: SettingsFormProps) {
 
   const handleSave = async () => {
     try {
-      await updateAISettings(aiProvider, aiModel);
+      await Promise.all([
+        updateAISettings(aiProvider, aiModel),
+        updateUserProfile(name),
+        updateUserSettings({
+          timezone: preferences.timezone,
+          enableNotifications: notifications.email || notifications.push || notifications.dailySummary,
+        }),
+      ]);
       alert("設定を保存しました");
     } catch (error) {
       console.error("Failed to save settings:", error);
